@@ -33,8 +33,7 @@ const createOrder = asyncHandler(async (req, res) => {
     paymentStatus: "pending",
   });
 
-  // Clear the user's cart after order is placed
-//   await Cart.findOneAndDelete({ userId });
+
 
   res.status(201).json(order);
 });
@@ -52,21 +51,29 @@ const getUserOrders = asyncHandler(async (req, res) => {
 // @route PUT /api/orders/:orderId
 // @access Private
 const updatePaymentStatus = asyncHandler(async (req, res) => {
-  const { orderId } = req.params;
-  const { paymentStatus, transactionId } = req.body;
+    const { orderId, status, transactionId } = req.body;
 
-  const order = await Order.findById(orderId);
+    const order = await Order.findById(orderId);
 
-  if (!order) {
-    res.status(404);
-    throw new Error("Order not found");
-  }
+    if (!order) {
+        res.status(404);
+        throw new Error("Order not found");
+    }
 
-  order.paymentStatus = paymentStatus || order.paymentStatus;
-  order.transactionId = transactionId || order.transactionId;
+    order.paymentStatus = status;
+    if (transactionId) {
+        order.transactionId = transactionId;
+    }
 
-  const updatedOrder = await order.save();
-  res.status(200).json(updatedOrder);
+    await order.save();
+
+    // ✅ Only clear the cart when the payment is successful
+    if (status === "success") {
+        await Cart.findOneAndDelete({ userId: order.userId });
+    }
+
+    res.status(200).json({ message: "Payment status updated successfully" });
 });
+
 
 module.exports = { createOrder, getUserOrders, updatePaymentStatus };
