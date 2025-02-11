@@ -9,6 +9,8 @@ import AllProducts from "./pages/AllProducts";
 import PrivateRoute from "./components/PrivateRoute";
 import Cart from "./pages/Cart";
 import Order from "./pages/Order";
+import CancelledPage from "./pages/CancelledPage";
+import SuccessPage from "./pages/SuccessPage";
 
 function App() {
   return (
@@ -30,9 +32,14 @@ function App() {
             <Route path="/order" element={<PrivateRoute />}>
             <Route path="/order" element={<Order />} />
             </Route>
+            <Route path="/cancel" element={<PrivateRoute />}>
+            <Route path="/cancel" element={<CancelledPage />} />
 
+            </Route>
+            <Route path="/success" element={<PrivateRoute />}>
+            <Route path="/success" element={<SuccessPage />} />
 
-            
+            </Route>
 
             
             
