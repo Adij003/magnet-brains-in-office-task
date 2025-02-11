@@ -22,7 +22,7 @@ function Header() {
   return (
     <header className='header'>
         <div className="logo">
-        <Link to='/'>FAQ Desk</Link>
+        <Link to='/'>Shopping Desk</Link>
         </div>
         <ul>
           {
