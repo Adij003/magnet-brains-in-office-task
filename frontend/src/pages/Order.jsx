@@ -2,11 +2,33 @@ import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import CartItem from '../components/CartItem';
+import Spinner from '../components/Spinner';
+import { getCart, resetCartState } from "../features/cart/cartSlice";
+
+
+
 
 function Order() {
+      const dispatch = useDispatch();
+  
   const { user } = useSelector((state) => state.auth);
-  const { cart } = useSelector((state) => state.cart); // Assuming cart is stored in Redux
+      const { cart, isCartSuccess, isCartError, cartMessage, isCartLoading } = useSelector((state) => state.cart);
+  
   const navigate = useNavigate();
+
+      useEffect(() => {
+          dispatch(getCart());
+      }, [dispatch]);
+
+
+      if (isCartLoading) {
+        return <Spinner />;
+    }
+
+    if (isCartError) {
+        return <p>Error: {cartMessage}</p>;
+    }
 
   const handleCheckout = async () => {
     try {
@@ -49,6 +71,19 @@ function Order() {
           <input type="text" className="form-control" value={user.email} disabled />
         </div>
       </section>
+
+      <div className="cart-container">
+                <h2>Your Cart</h2>
+                {cart && cart.items && cart.items.length > 0 ? (
+                    <div className="cart-grid">
+                        {cart.items.map((cartItem) => (
+                            <CartItem key={cartItem._id} cartItem={cartItem} />
+                        ))}
+                    </div>
+                ) : (
+                    <p>Your cart is empty</p>
+                )}
+            </div>
       <button className="add-to-cart" onClick={handleCheckout}>
         Proceed to Checkout
       </button>
